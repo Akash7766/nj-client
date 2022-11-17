@@ -10,7 +10,7 @@ const SideBar = () => {
         const { data } = await axios.get('http://localhost:5000/api/v1/user')
         return data
     })
-    const dbUser = data.data.find(u=> u.email === user.email)
+    const dbUser = data?.data?.find(u=> u.email === user.email)
     console.log(dbUser)
 
     return (
