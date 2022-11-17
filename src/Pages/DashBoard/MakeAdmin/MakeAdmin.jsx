@@ -5,7 +5,7 @@ const MakeAdmin = () => {
     const [email, setEmail] = useState('')
     const handleAdminSubmit = e => {
         const user = { email }
-        fetch('http://localhost:5000/api/v1/users/admin', {
+        fetch('http://localhost:5000/api/v1/user/admin', {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json'

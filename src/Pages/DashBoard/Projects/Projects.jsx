@@ -1,9 +1,11 @@
+import axios from 'axios'
 import React, { useRef, useState } from 'react'
 import Button from 'react-bootstrap/esm/Button'
 import Col from 'react-bootstrap/esm/Col'
 import Row from 'react-bootstrap/esm/Row'
 import Table from 'react-bootstrap/esm/Table'
 import Form from 'react-bootstrap/Form'
+import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
 import UseProject from '../../../Hooks/UseProject'
 
@@ -14,6 +16,10 @@ const Projects = () => {
     const imageInputRef = useRef();
 
     const { projects, reLoad, SetReLoad, isLoading, setProjects } = UseProject()
+    const { data:project, error, isError,refetch } = useQuery('projects', async()=>{
+        const { data } = await axios.get('http://localhost:5000/api/v1/project')
+        return data
+    })
 
     const [isActive, setIsActive] = useState(false)
 
@@ -55,6 +61,8 @@ const Projects = () => {
         SetReLoad(reLoad + 3)
     }
 
+    
+
     return (
         <div className='container'>
             <Button variant="primary" onClick={() => setIsActive(!isActive)}>
@@ -93,7 +101,7 @@ const Projects = () => {
             <br />
             <div className="manage-instagram-post">
                 {
-                    (projects.length > 0) ? <Table responsive>
+                    (project?.data.length > 0) ? <Table responsive>
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -103,7 +111,7 @@ const Projects = () => {
                         </thead>
                         <tbody>
                             {
-                                projects?.map((project, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={` data:image/jpeg;base64,${project.img}`} /> <h5 className='p-2 d-inline'>{project.title}</h5></td> <td>
+                                project?.data?.map((project, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={` data:image/jpeg;base64,${project.img}`} /> <h5 className='p-2 d-inline'>{project.title}</h5></td> <td>
                                     <Link to={`/dash-board/project/update/${project._id}`} className="btn btn-primary m-1" ><i class="bi bi-pencil-square"></i></Link>
                                     <button className="btn btn-danger" onClick={() => deleteBlog(project._id)}><i class="bi bi-trash-fill"></i></button></td></tr>)
                             }

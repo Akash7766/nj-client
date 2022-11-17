@@ -1,7 +1,18 @@
+import axios from 'axios'
 import React from 'react'
+import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
+import useAuth from '../../../Hooks/useAuth'
 
 const SideBar = () => {
+    const {user}=useAuth()
+    const { data, error, isError, isLoading:loading,refetch } = useQuery('users', async()=>{
+        const { data } = await axios.get('http://localhost:5000/api/v1/user')
+        return data
+    })
+    const dbUser = data.data.find(u=> u.email === user.email)
+    console.log(dbUser)
+
     return (
 
 
@@ -65,7 +76,9 @@ const SideBar = () => {
                                     <li><a href="auth-two-step-verification.html" data-key="t-two-step-verification">Two Step Verification</a></li>
                                 </ul>
                             </li> */}
-                            <li className="menu-title mt-2" data-key="t-components">Elements</li>
+                            {dbUser?.role ==="admin" &&
+                                <>
+                                <li className="menu-title mt-2" data-key="t-components">Elements</li>
                             <li>
                                 <Link to='/dash-board/admin'>
                                     <i data-feather="file-text"></i>
@@ -116,7 +129,8 @@ const SideBar = () => {
                                 </Link>
 
                             </li>
-
+</>
+                            }
 
 
                         </ul>

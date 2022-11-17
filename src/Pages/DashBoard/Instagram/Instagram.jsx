@@ -1,9 +1,11 @@
+import axios from 'axios'
 import React, { useRef, useState } from 'react'
 import Button from 'react-bootstrap/esm/Button'
 import Col from 'react-bootstrap/esm/Col'
 import Row from 'react-bootstrap/esm/Row'
 import Table from 'react-bootstrap/esm/Table'
 import Form from 'react-bootstrap/Form'
+import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
 import UseInstagram from '../../../Hooks/UseInstagram'
 
@@ -14,6 +16,10 @@ const Instagram = () => {
   const imageInputRef = useRef();
 
   const { instagramPost, reLoad, SetReLoad, isLoading, setInstagramPost } = UseInstagram()
+  const { data:instagram, error, isError,refetch } = useQuery('instagrams', async()=>{
+    const { data } = await axios.get('http://localhost:5000/api/v1/instagram')
+    return data
+})
 
   const [isActive, setIsActive] = useState(false)
 
@@ -93,7 +99,7 @@ const Instagram = () => {
       <br />
       <div className="manage-instagram-post">
         {
-          (instagramPost.length > 0) ? <Table responsive>
+          (instagram?.data?.length > 0) ? <Table responsive>
             <thead>
               <tr>
                 <th>Id</th>
@@ -107,7 +113,7 @@ const Instagram = () => {
             </thead>
             <tbody>
               {
-                instagramPost.map((ip, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={` data:image/jpeg;base64,${ip.img}`} /> <h5 className='p-2 d-inline'>{ip.title}</h5></td> <td>
+                instagram?.data?.map((ip, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={` data:image/jpeg;base64,${ip.img}`} /> <h5 className='p-2 d-inline'>{ip.title}</h5></td> <td>
                   <Link to={`/dash-board/instagram/update/${ip._id}`} className="btn btn-primary m-1" ><i class="bi bi-pencil-square"></i></Link>
 
                   <button className="btn btn-danger" onClick={() => deleteBlog(ip._id)}><i class="bi bi-trash-fill"></i></button></td></tr>)

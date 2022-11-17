@@ -24,7 +24,8 @@ const OurProjects = () => {
                                 <a href={project.link}><img
                                     src={` data:image/jpeg;base64,${project.img}`}
                                     alt="" /></a>
-                            </li>) : <h3>projects loading...</h3>
+                            </li>) 
+                            : <h3>projects loading...</h3>
                         }
                     </ul>
                 </div>
