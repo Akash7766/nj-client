@@ -7,13 +7,14 @@ import Table from 'react-bootstrap/esm/Table'
 import Form from 'react-bootstrap/Form'
 import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import UseInstagram from '../../../Hooks/UseInstagram'
 
 const Instagram = () => {
+  const [load,setLoad]=useState(false)
   const [image, setImage] = useState(null)
   const [postLink, setPostLink] = useState('')
   const [postTitle, setPostTitle] = useState('')
-  const imageInputRef = useRef();
 
   const { instagramPost, reLoad, SetReLoad, isLoading, setInstagramPost } = UseInstagram()
   const { data:instagram, error, isError,refetch } = useQuery('instagrams', async()=>{
@@ -25,37 +26,53 @@ const Instagram = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(image)
+    setLoad(true)
     const formData = new FormData()
-    formData.append('title', postTitle)
-    formData.append('link', postLink)
-    formData.append('img', image)
+    formData.append('file', image)
+    formData.append("upload_preset","NJ_images")
+    formData.append("cloud_name","dya0kqtgi")
 
     // post api call
-    fetch('http://localhost:5000/api/v1/instagram', {
-      method: 'POST',
+    fetch("https://api.cloudinary.com/v1_1/dya0kqtgi/image/upload",{
+      method:"POST",
+      body:formData
+    })
+    .then(res => res.json())
+    .then(async data => {
+        if(data.asset_id){
+            const img = data.url
+            const instagram = {postTitle,postLink,img}
+            console.log(instagram);
+            const res =await axios.post("http://localhost:5000/api/v1/instagram",instagram)
 
-      body: formData
-    }).then(res => res.json())
-      .then(data => (SetReLoad(reLoad + 3), console.log(data)))
-
+            if(res){
+                setLoad(false)
+                toast("Instagram Post added Successfull")
+                refetch()
+            }
+        }
+    })
+    .catch((err)=>{
+        setLoad(false)
+        console.log(err);
+    })
     //clear all input field
     setPostTitle('')
 
     setPostLink('')
-    imageInputRef.current.value = "";
     setImage(null)
 
     setIsActive(!isActive)
   }
   const deleteBlog = (id) => {
-
-    fetch(`http://localhost:5000/api/v1/instagram_delete/${id}`, {
+    setLoad(true)
+    fetch(`http://localhost:5000/api/v1/instagram/${id}`, {
       method: 'DELETE'
     })
       .then(res => res.json())
       .then(result => {
         console.log(result)
+        setLoad(false)
 
       })
     SetReLoad(reLoad + 2)
@@ -82,7 +99,6 @@ const Instagram = () => {
               <Form.Group className="mb-3" controlId="formGroupFile">
                 <Form.Label> Image </Form.Label>
                 <Form.Control
-                  ref={imageInputRef}
                   accept='image/*'
                   onChange={(e) => setImage(e.target.files[0])}
 
@@ -113,7 +129,7 @@ const Instagram = () => {
             </thead>
             <tbody>
               {
-                instagram?.data?.map((ip, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={` data:image/jpeg;base64,${ip.img}`} /> <h5 className='p-2 d-inline'>{ip.title}</h5></td> <td>
+                instagram?.data?.map((ip, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={ip.img} /> <h5 className='p-2 d-inline'>{ip.title}</h5></td> <td>
                   <Link to={`/dash-board/instagram/update/${ip._id}`} className="btn btn-primary m-1" ><i class="bi bi-pencil-square"></i></Link>
 
                   <button className="btn btn-danger" onClick={() => deleteBlog(ip._id)}><i class="bi bi-trash-fill"></i></button></td></tr>)

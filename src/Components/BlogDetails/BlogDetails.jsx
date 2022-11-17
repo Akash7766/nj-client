@@ -32,7 +32,7 @@ const BlogDetails = () => {
                             <p class="uk-article-dropcaps">{blog?.data?.dec}</p>
                         </div>
                         <div class="uk-text-center uk-width-xlarge-5-6 uk-container-center">
-                            <img src={` data:image/jpeg;base64,${blog?.data?.img}`} alt="" />
+                            <img src={blog?.data?.img} alt="" />
                         </div>
 
 

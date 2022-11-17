@@ -11,7 +11,6 @@ const SideBar = () => {
         return data
     })
     const dbUser = data?.data?.find(u=> u.email === user.email)
-    console.log(dbUser)
 
     return (
 

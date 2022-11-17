@@ -22,7 +22,7 @@ const MyBlogs = () => {
 
                 <article className="uk-article uk-article-list">
 
-                    <a className="uk-display-block uk-text-center" href="#"><img style={{ width: '450px', height: '300px' }} alt="" src={` data:image/jpeg;base64,${blog.img}`} /></a>
+                    <a className="uk-display-block uk-text-center" href="#"><img style={{ width: '450px', height: '300px' }} alt="" src={`${blog.img}`} /></a>
 
                     <p className="uk-article-meta">
                         <time datetime="2016-03-11">{blog.date}</time>

@@ -5,7 +5,6 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { useState, useEffect } from 'react';
 import UseBlogs from '../../../Hooks/UseBlogs';
-import { useRef } from 'react';
 import Spinner from '../../../Components/Spinner/Spinner';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
@@ -21,46 +20,52 @@ const Blog = () => {
     const [date, setDate] = useState('')
     const [image, setImage] = useState(null)
     const {  reLoad, SetReLoad, setBlogs } = UseBlogs()
-    const { data:blogs, error, isError, isLoading,refetch } = useQuery('blogs', async()=>{
+    const { data:blogs,  isLoading,refetch } = useQuery('blogs', async()=>{
         const { data } = await axios.get('http://localhost:5000/api/v1/blog')
         return data
     })
-    console.log(blogs)
 
 
-    const imageInputRef = useRef();
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoad(true)
-        console.log(image)
         const formData = new FormData()
-        formData.append('title', title)
-        formData.append('dec', descreption)
-        formData.append('date', date)
-        formData.append('img', image)
+        formData.append('file', image)
+        formData.append("upload_preset","NJ_images")
+        formData.append("cloud_name","dya0kqtgi")
 
-        
+    fetch("https://api.cloudinary.com/v1_1/dya0kqtgi/image/upload",{
+      method:"POST",
+      body:formData
+    })
+    .then(res => res.json())
+    .then(async data => {
+        if(data.asset_id){
+            const img = data.url
+            const blog = {title,dec:descreption,date,img}
+            console.log(blog);
+            const res =await axios.post("http://localhost:5000/api/v1/blog",blog)
 
-        fetch('http://localhost:5000/api/v1/blog', {
-            method: 'POST',
+            if(res){
+                setLoad(false)
+                refetch()
+            }
+        }
+    })
+    .catch((err)=>{
+        setLoad(false)
+        console.log(err);
+    })
 
-            body: formData
-        }).then(res => res.json())
-            .then(data => {
-                if(data.success){
-                    setLoad(false)
-                    refetch()
-                    toast("Blog add successfully")
-                }
-            })
+            
+            
 
         //clear all input field
         setTitle('')
         setDate('')
         setDescreption('')
-        imageInputRef.current.value = "";
         setImage(null)
 
 
@@ -133,7 +138,6 @@ const Blog = () => {
                             <Form.Group className='col-4 sm-12' controlId="formGridState">
                                 <Form.Label>Image</Form.Label>
                                 <Form.Control
-                                    ref={imageInputRef}
                                     accept='image/*'
                                     onChange={(e) => setImage(e.target.files[0])}
 
@@ -169,7 +173,7 @@ const Blog = () => {
                             </thead>
                             <tbody>
                                 {
-                                    blogs?.data?.map((blog, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={` data:image/jpeg;base64,${blog.img}`} /> <h5 className='p-2 d-inline'>{blog.title}</h5></td> <td>
+                                    blogs?.data?.map((blog, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={blog.img} /> <h5 className='p-2 d-inline'>{blog.title}</h5></td> <td>
                                         <Link to={`/dash-board/blog/update/${blog._id}`} className="btn btn-primary m-1" ><i class="bi bi-pencil-square"></i></Link>
 
                                         <button className="btn btn-danger" onClick={() => deleteBlog(blog._id)}><i class="bi bi-trash-fill"></i></button></td></tr>)

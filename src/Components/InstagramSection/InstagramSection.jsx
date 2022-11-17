@@ -16,13 +16,15 @@ const InstagramSection = () => {
 
             <div className="uk-slider-container">
                 <div
-                    className="uk-slider uk-grid uk-grid-medium uk-grid-width-small-1-2 uk-grid-width-medium-1-3 uk-grid-width-large-1-5">{
+                    className="uk-slider uk-grid uk-grid-medium uk-grid-width-small-1-2 uk-grid-width-medium-1-3 uk-grid-width-large-1-5">ok{
                         instagramPost?.data?.map(ig =>
                             <div key={ig._id}>
                                 <div className="uk-article uk-article-list uk-article-related">
-                                    <a href="#" className="uk-display-block"><img
-                                        src={`data:image/jpeg;base64,${ig.img}`}
-                                        alt="" /></a>
+                                    <a href="#" className="uk-display-block">
+                                        <img
+                                        src={ig.img}
+                                        alt="" />
+                                    </a>
 
                                 </div>
                             </div>)

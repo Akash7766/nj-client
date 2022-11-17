@@ -1,7 +1,7 @@
 import React from 'react'
 
 const HeroSlider = ({ slide }) => {
-    const img = ` data:image/jpeg;base64,${slide.img}`;
+    const img = `${slide.img}`;
     return (
 
         <li>
@@ -13,7 +13,7 @@ const HeroSlider = ({ slide }) => {
                 <div className="uk-overlay-panel uk-overlay-background uk-overlay-fade uk-flex uk-flex-center uk-flex-middle uk-text-center">
                     <div>
 
-                        <h2 className="uk-article-title">{slide.title}</h2>
+                        <h2 className="uk-article-title">{slide.sliderTitle}</h2>
                     </div>
                 </div>
             </article>

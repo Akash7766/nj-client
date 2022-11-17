@@ -27,23 +27,33 @@ const Slider = () => {
     setLoad(true)
     console.log(image)
     const formData = new FormData()
-    formData.append('title', sliderTitle)
-    formData.append('dec', sliderDesc)
-    formData.append('img', image)
+    formData.append('file', image)
+    formData.append("upload_preset","NJ_images")
+    formData.append("cloud_name","dya0kqtgi")
 
 
-    fetch('http://localhost:5000/api/v1/slider', {
-      method: 'POST',
+    fetch("https://api.cloudinary.com/v1_1/dya0kqtgi/image/upload",{
+      method:"POST",
+      body:formData
+    })
+    .then(res => res.json())
+    .then(async data => {
+        if(data.asset_id){
+            const img = data.url
+            const slider = {sliderTitle,sliderDesc,img}
+            console.log(slider);
+            const res =await axios.post("http://localhost:5000/api/v1/slider",slider)
 
-      body: formData
-    }).then(res => res.json())
-      .then(data => {
-        if(data.success){
-          setLoad(false)
-          refetch()
-          toast("slider added successfully")
-      }
-      })
+            if(res){
+                setLoad(false)
+                refetch()
+            }
+        }
+    })
+    .catch((err)=>{
+        setLoad(false)
+        console.log(err);
+    })
 
     //clear all input field
     setSliderTitle('')
@@ -150,7 +160,7 @@ const Slider = () => {
                 <tbody>
                   {
                     // eslint-disable-next-line jsx-a11y/alt-text
-                    sliders?.data?.map((sld, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={` data:image/jpeg;base64,${sld.img}`} /> <h5 className='p-2 d-inline'>{sld.title}</h5></td> <td><Link to={`/dash-board/slider/update/${sld._id}`} className="btn btn-primary m-1" ><i class="bi bi-pencil-square"></i></Link>
+                    sliders?.data?.map((sld, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={`${sld.img}`} /> <h5 className='p-2 d-inline'>{sld.title}</h5></td> <td><Link to={`/dash-board/slider/update/${sld._id}`} className="btn btn-primary m-1" ><i class="bi bi-pencil-square"></i></Link>
                       <button className="btn btn-danger" onClick={() => deleteBlog(sld._id)}><i class="bi bi-trash-fill"></i></button></td></tr>)
                   }
                 </tbody>
