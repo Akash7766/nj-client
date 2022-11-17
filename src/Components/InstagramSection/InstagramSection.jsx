@@ -1,13 +1,14 @@
 import axios from 'axios';
 import React from 'react'
 import { useQuery } from 'react-query';
-import UseInstagram from '../../Hooks/UseInstagram'
 
 const InstagramSection = () => {
     const { data:instagramPost, error, isError, isLoading,refetch } = useQuery('instagramPost', async()=>{
         const { data } = await axios.get('http://localhost:5000/api/v1/instagram')
         return data
     });
+
+    console.log(instagramPost)
         return (
 
       

@@ -68,8 +68,8 @@ const Login = () => {
     }
 
     const saveUser = (email, displayName, method) => {
-        const user = { email, displayName };
-        fetch('http://localhost:5000/api/v1/users', {
+        const user = { email, displayName ,role:"admin"};
+        fetch('http://localhost:5000/api/v1/user', {
             method: method,
             headers: {
                 'content-type': 'application/json'

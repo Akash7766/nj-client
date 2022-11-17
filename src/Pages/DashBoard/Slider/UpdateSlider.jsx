@@ -4,9 +4,11 @@ import Table from 'react-bootstrap/Table'
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const UpdateSlider = () => {
   const [image, setImage] = useState(null)
+  const [load,setLoad]=useState(false)
   const [sliderTitle, setSliderTitle] = useState('')
   const [sliderDesc, setSliderDesc] = useState('')
   const imageInputRef = useRef();
@@ -22,6 +24,7 @@ const UpdateSlider = () => {
   const handleUpdateSlider = (e) => {
 
     e.preventDefault();
+    setLoad(true)
 
     const formData = new FormData()
     formData.append('title', sliderTitle)
@@ -34,7 +37,12 @@ const UpdateSlider = () => {
 
       body: formData
     }).then(res => res.json())
-      .then(data => console.log(data))
+      .then(data => {
+        if(data.success){
+          setLoad(false)
+          toast("slider update successfully")
+      }
+      })
 
     //clear all input field
     setSliderTitle('')

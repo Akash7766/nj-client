@@ -7,20 +7,24 @@ import UseSlider from '../../../Hooks/UseSlider';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import Spinner from '../../../Components/Spinner/Spinner';
 const Slider = () => {
   const [image, setImage] = useState(null)
   const [sliderTitle, setSliderTitle] = useState('')
+  const [load,setLoad]=useState(false)
   const [sliderDesc, setSliderDesc] = useState('')
   const imageInputRef = useRef();
   const [addBtnActive, setAddBtnActive] = useState(false)
   const { slider, reLoad, SetReLoad, isLoading, setSlider } = UseSlider()
-  const { data:sliders, error, isError, isLoading:load,refetch } = useQuery('sliders', async()=>{
+  const { data:sliders, error, isError, isLoading:loading,refetch } = useQuery('sliders', async()=>{
     const { data } = await axios.get('http://localhost:5000/api/v1/slider')
     return data
 })
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoad(true)
     console.log(image)
     const formData = new FormData()
     formData.append('title', sliderTitle)
@@ -33,7 +37,13 @@ const Slider = () => {
 
       body: formData
     }).then(res => res.json())
-      .then(data => (SetReLoad(reLoad + 1), console.log(data)))
+      .then(data => {
+        if(data.success){
+          setLoad(false)
+          refetch()
+          toast("slider added successfully")
+      }
+      })
 
     //clear all input field
     setSliderTitle('')
@@ -46,16 +56,25 @@ const Slider = () => {
   }
 
   const deleteBlog = (id) => {
+    setLoad(true)
 
-    fetch(`http://localhost:5000/api/v1/slider_delete/${id}`, {
+
+    fetch(`http://localhost:5000/api/v1/slider/${id}`, {
       method: 'DELETE'
     })
       .then(res => res.json())
       .then(result => {
-        console.log(result)
+        if(result.success){
+          setLoad(false)
+          refetch()
+          toast("slider deleted successfully")
+      }
 
       })
-    SetReLoad(reLoad + 4)
+  }
+
+  if(load){
+   return <Spinner/>
   }
   return (
     <div>

@@ -10,9 +10,11 @@ import Spinner from '../../../Components/Spinner/Spinner';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 
 const Blog = () => {
+    const [load,setLoad]=useState(false)
     const [addBtnActive, setAddBtnActive] = useState(false)
     const [title, setTitle] = useState("")
     const [descreption, setDescreption] = useState('')
@@ -31,6 +33,7 @@ const Blog = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setLoad(true)
         console.log(image)
         const formData = new FormData()
         formData.append('title', title)
@@ -38,13 +41,20 @@ const Blog = () => {
         formData.append('date', date)
         formData.append('img', image)
 
+        
 
         fetch('http://localhost:5000/api/v1/blog', {
             method: 'POST',
 
             body: formData
         }).then(res => res.json())
-            .then(data => (SetReLoad(reLoad + 1), refetch()))
+            .then(data => {
+                if(data.success){
+                    setLoad(false)
+                    refetch()
+                    toast("Blog add successfully")
+                }
+            })
 
         //clear all input field
         setTitle('')
@@ -57,6 +67,7 @@ const Blog = () => {
     }
 
     const deleteBlog = (id) => {
+        setLoad(true)
 
         fetch(`http://localhost:5000/api/v1/blog/${id}`, {
             method: 'DELETE'
@@ -64,11 +75,16 @@ const Blog = () => {
             .then(res => res.json())
             .then(result => {
                 if(result.success){
+                    setLoad(false)
                     refetch()
+                    toast("Blog delete successfully")
                 }
 
             })    }
 
+            if(load){
+                return <Spinner/>
+            }
     return (
         <div className="container">
 
@@ -139,7 +155,7 @@ const Blog = () => {
             <div className="container blog-manage-section">
                 {isLoading ? <Spinner /> : <div className="container">
                     {
-                        (blogs.data.length > 0) ? <Table responsive>
+                        (blogs?.data?.length > 0) ? <Table responsive>
                             <thead>
                                 <tr>
                                     <th>Id</th>
@@ -153,7 +169,7 @@ const Blog = () => {
                             </thead>
                             <tbody>
                                 {
-                                    blogs.data.map((blog, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={` data:image/jpeg;base64,${blog.img}`} /> <h5 className='p-2 d-inline'>{blog.title}</h5></td> <td>
+                                    blogs?.data?.map((blog, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={` data:image/jpeg;base64,${blog.img}`} /> <h5 className='p-2 d-inline'>{blog.title}</h5></td> <td>
                                         <Link to={`/dash-board/blog/update/${blog._id}`} className="btn btn-primary m-1" ><i class="bi bi-pencil-square"></i></Link>
 
                                         <button className="btn btn-danger" onClick={() => deleteBlog(blog._id)}><i class="bi bi-trash-fill"></i></button></td></tr>)

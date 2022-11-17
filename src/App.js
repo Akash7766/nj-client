@@ -32,6 +32,8 @@ import Home from "./Pages/Home/Home";
 import Project from "./Pages/Project/Project";
 import Footer from "./Shared/Footer/Footer";
 import NavBar from "./Shared/NavBar/NavBar";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const queryClient = new QueryClient();
@@ -80,7 +82,9 @@ function App() {
         </BrowserRouter>
 
       </AuthProvider>
-
+      <ToastContainer
+       position="top-right"
+        autoClose={2000}/>
       </QueryClientProvider>  );
 }
 

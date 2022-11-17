@@ -18,7 +18,7 @@ const MyBlogs = () => {
 
 
 
-            {blogs.data.map(blog => <div className='card m- p-1 col'>
+            {blogs?.data?.map(blog => <div className='card m- p-1 col'>
 
                 <article className="uk-article uk-article-list">
 

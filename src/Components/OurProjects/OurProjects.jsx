@@ -2,13 +2,15 @@ import axios from 'axios';
 import React from 'react'
 import { useQuery } from 'react-query';
 import UseProject from '../../Hooks/UseProject'
+import Spinner from '../Spinner/Spinner';
 // import SingleProject from '../SingleProject/SingleProject'
 
 const OurProjects = () => {
     const { data:projects, error, isError, isLoading,refetch } = useQuery('projects', async()=>{
-        const { data } = await axios.get('http://localhost:5000/api/v1/blog')
+        const { data } = await axios.get('http://localhost:5000/api/v1/project')
         return data
     })  ;
+
       return (
 
         <div className="uk-panel uk-panel-box uk-panel-box-primary tm-instagram-pics">
