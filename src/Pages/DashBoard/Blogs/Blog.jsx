@@ -51,6 +51,10 @@ const Blog = () => {
             if(res){
                 setLoad(false)
                 refetch()
+                if(res.data.success){
+                    toast("Blog Post added Successfull")
+  
+                  }
             }
         }
     })

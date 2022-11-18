@@ -16,7 +16,6 @@ const Slider = () => {
   const [sliderDesc, setSliderDesc] = useState('')
   const imageInputRef = useRef();
   const [addBtnActive, setAddBtnActive] = useState(false)
-  const { slider, reLoad, SetReLoad, isLoading, setSlider } = UseSlider()
   const { data:sliders, error, isError, isLoading:loading,refetch } = useQuery('sliders', async()=>{
     const { data } = await axios.get('http://localhost:5000/api/v1/slider')
     return data
@@ -47,6 +46,10 @@ const Slider = () => {
             if(res){
                 setLoad(false)
                 refetch()
+                if(res.data.success){
+                  toast("slider Post added Successfull")
+
+                }
             }
         }
     })
@@ -160,7 +163,7 @@ const Slider = () => {
                 <tbody>
                   {
                     // eslint-disable-next-line jsx-a11y/alt-text
-                    sliders?.data?.map((sld, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={`${sld.img}`} /> <h5 className='p-2 d-inline'>{sld.title}</h5></td> <td><Link to={`/dash-board/slider/update/${sld._id}`} className="btn btn-primary m-1" ><i class="bi bi-pencil-square"></i></Link>
+                    sliders?.data?.map((sld, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={`${sld.img}`} /> <h5 className='p-2 d-inline'>{sld.sliderTitle}</h5></td> <td><Link to={`/dash-board/slider/update/${sld._id}`} className="btn btn-primary m-1" ><i class="bi bi-pencil-square"></i></Link>
                       <button className="btn btn-danger" onClick={() => deleteBlog(sld._id)}><i class="bi bi-trash-fill"></i></button></td></tr>)
                   }
                 </tbody>

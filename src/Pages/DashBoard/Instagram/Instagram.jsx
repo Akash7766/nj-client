@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form'
 import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import Spinner from '../../../Components/Spinner/Spinner'
 import UseInstagram from '../../../Hooks/UseInstagram'
 
 const Instagram = () => {
@@ -47,8 +48,11 @@ const Instagram = () => {
 
             if(res){
                 setLoad(false)
-                toast("Instagram Post added Successfull")
                 refetch()
+                if(res.data.success){
+                  toast("Instagram Post added Successfull")
+
+                }
             }
         }
     })
@@ -69,14 +73,19 @@ const Instagram = () => {
     fetch(`http://localhost:5000/api/v1/instagram/${id}`, {
       method: 'DELETE'
     })
-      .then(res => res.json())
-      .then(result => {
-        console.log(result)
-        setLoad(false)
+    .then(res => res.json())
+    .then(result => {
+        if(result.success){
+            setLoad(false)
+            refetch()
+            toast("instagram delete successfully")
+        }
 
-      })
-    SetReLoad(reLoad + 2)
-  }
+    })    }
+
+    if(load){
+        return <Spinner/>
+    }
 
   return (
     <div className='container'>
@@ -129,7 +138,7 @@ const Instagram = () => {
             </thead>
             <tbody>
               {
-                instagram?.data?.map((ip, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={ip.img} /> <h5 className='p-2 d-inline'>{ip.title}</h5></td> <td>
+                instagram?.data?.map((ip, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={ip.img} /> <h5 className='p-2 d-inline'>{ip.postTitle}</h5></td> <td>
                   <Link to={`/dash-board/instagram/update/${ip._id}`} className="btn btn-primary m-1" ><i class="bi bi-pencil-square"></i></Link>
 
                   <button className="btn btn-danger" onClick={() => deleteBlog(ip._id)}><i class="bi bi-trash-fill"></i></button></td></tr>)

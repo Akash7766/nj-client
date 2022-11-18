@@ -12,7 +12,6 @@ const HeroSlider = ({ slide }) => {
                 <img className="uk-invisible" src={img} alt="" />
                 <div className="uk-overlay-panel uk-overlay-background uk-overlay-fade uk-flex uk-flex-center uk-flex-middle uk-text-center">
                     <div>
-
                         <h2 className="uk-article-title">{slide.sliderTitle}</h2>
                     </div>
                 </div>

@@ -1,12 +1,17 @@
 
+import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import Button from 'react-bootstrap/esm/Button'
 import Col from 'react-bootstrap/esm/Col'
 import Row from 'react-bootstrap/esm/Row'
 // import Table from 'react-bootstrap/esm/Table'
 import Form from 'react-bootstrap/Form'
+import { useQuery } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import Spinner from '../../../Components/Spinner/Spinner'
 const UpdateProject = () => {
+  const [load,setLoad]=useState(false)
   const [project, setProject] = useState({})
   const [image, setImage] = useState(null)
   const [projectLink, setProjectLink] = useState('')
@@ -15,26 +20,54 @@ const UpdateProject = () => {
   const { projectId } = useParams()
   const navigate = useNavigate()
   useEffect(() => {
-    fetch(`http://localhost:5000/api/v1/add_project/${projectId}`).then(res => res.json()).then(data => setProject(data))
+    fetch(`http://localhost:5000/api/v1/project/${projectId}`).then(res => res.json()).then(data => setProject(data))
   }, [])
-
+  const { refetch } = useQuery('projects', async()=>{
+    const { data } = await axios.get('http://localhost:5000/api/v1/project')
+    return data
+})
 
   const handleUpdateProject = (e) => {
     e.preventDefault();
-
+    setLoad(true)
     const formData = new FormData()
-    formData.append('title', projectTitle)
-    formData.append('link', projectLink)
-    formData.append('img', image)
+    formData.append('file', image)
+    formData.append("upload_preset","NJ_images")
+    formData.append("cloud_name","dya0kqtgi")
 
-    // post api call
-    fetch(`http://localhost:5000/api/v1/update_project/${projectId}`, {
-      method: 'PUT',
+    console.log(formData)
+    fetch("https://api.cloudinary.com/v1_1/dya0kqtgi/image/upload",{
+      method:"POST",
+      body:formData
+    })
+    .then(res => res.json())
+    .then(async data => {
+        if(data.asset_id){
+            const img = data.url
+            const newProject = {title:projectTitle,link:projectLink,img}
+            console.log(newProject);
+            const res =await axios.put(`http://localhost:5000/api/v1/project/${projectId}`,newProject)
 
-      body: formData
-    }).then(res => res.json())
-      .then(data => console.log(data))
+            if(res){
+                setLoad(false)
+                refetch()
+                if(res.data.success){
+                  toast("update successful")
+                }
+            }
+        }
+    })
+    .catch((err)=>{
+        setLoad(false)
+        console.log(err);
+    })
 
+    if(load){
+      return <Spinner/>
+    }
+    else{
+      navigate('/dash-board/project')
+    }
     //clear all input field
     setProjectTitle('')
     navigate('/dash-board/project')

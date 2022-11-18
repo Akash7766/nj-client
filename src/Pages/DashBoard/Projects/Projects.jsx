@@ -7,13 +7,15 @@ import Table from 'react-bootstrap/esm/Table'
 import Form from 'react-bootstrap/Form'
 import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import Spinner from '../../../Components/Spinner/Spinner'
 import UseProject from '../../../Hooks/UseProject'
 
 const Projects = () => {
+    const [load,setLoad]=useState(false)
     const [image, setImage] = useState(null)
     const [projectLink, setProjectLink] = useState('')
     const [projectTitle, setProjectTitle] = useState('')
-    const imageInputRef = useRef();
 
     const { projects, reLoad, SetReLoad, isLoading, setProjects } = UseProject()
     const { data:project, error, isError,refetch } = useQuery('projects', async()=>{
@@ -25,43 +27,66 @@ const Projects = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(image)
+        setLoad(true)
         const formData = new FormData()
-        formData.append('title', projectTitle)
-        formData.append('link', projectLink)
-        formData.append('img', image)
+        formData.append('file', image)
+        formData.append("upload_preset","NJ_images")
+        formData.append("cloud_name","dya0kqtgi")
 
         // post api call
-        fetch('http://localhost:5000/api/v1/project', {
-            method: 'POST',
+        fetch("https://api.cloudinary.com/v1_1/dya0kqtgi/image/upload",{
+      method:"POST",
+      body:formData
+    })
+    .then(res => res.json())
+    .then(async data => {
+        if(data.asset_id){
+            const img = data.url
+            const project = {title:projectTitle,link:projectLink,img}
+            console.log(project);
+            const res =await axios.post("http://localhost:5000/api/v1/project",project)
 
-            body: formData
-        }).then(res => res.json())
-            .then(data => (SetReLoad(reLoad + 1), console.log(data)))
+            if(res){
+                setLoad(false)
+                refetch()
+                if(res.data.success){
+                    toast("project Post added Successfull")
 
+                  }
+            }
+        }
+    })
+    .catch((err)=>{
+        setLoad(false)
+        console.log(err);
+    })
         //clear all input field
         setProjectTitle('')
 
         setProjectLink('')
-        imageInputRef.current.value = "";
         setImage(null)
 
         setIsActive(!isActive)
     }
     const deleteBlog = (id) => {
-
-        fetch(`http://localhost:5000/api/v1/project_delete/${id}`, {
+        setLoad(true)
+        fetch(`http://localhost:5000/api/v1/project/${id}`, {
             method: 'DELETE'
         })
             .then(res => res.json())
             .then(result => {
-                console.log(result)
+                if(result.success){
+                    setLoad(false)
+                    refetch()
+                    toast("project delete successfully")
+                }
 
             })
-        SetReLoad(reLoad + 3)
     }
 
-    
+    if(load){
+        return <Spinner/>
+    }
 
     return (
         <div className='container'>
@@ -84,7 +109,6 @@ const Projects = () => {
                             <Form.Group className="mb-3" controlId="formGroupFile">
                                 <Form.Label> Image </Form.Label>
                                 <Form.Control
-                                    ref={imageInputRef}
                                     accept='image/*'
                                     onChange={(e) => setImage(e.target.files[0])}
 
@@ -111,7 +135,7 @@ const Projects = () => {
                         </thead>
                         <tbody>
                             {
-                                project?.data?.map((project, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={` data:image/jpeg;base64,${project.img}`} /> <h5 className='p-2 d-inline'>{project.title}</h5></td> <td>
+                                project?.data?.map((project, index) => <tr key={index}><td>{index + 1}</td> <td> <img style={{ width: "40px", height: '35px' }} src={`${project.img}`} /> <h5 className='p-2 d-inline'>{project.title}</h5></td> <td>
                                     <Link to={`/dash-board/project/update/${project._id}`} className="btn btn-primary m-1" ><i class="bi bi-pencil-square"></i></Link>
                                     <button className="btn btn-danger" onClick={() => deleteBlog(project._id)}><i class="bi bi-trash-fill"></i></button></td></tr>)
                             }

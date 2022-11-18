@@ -31,7 +31,7 @@ const MyBlogs = () => {
                     <h2 className="uk-article-title"><a className="uk-display-block" >{blog.title}</a></h2>
 
 
-                    <p> {blog.dec.slice(0, 170)}</p>
+                    <p> {blog?.dec?.slice(0, 170)}</p>
 
                     <Link to={`/blog/${blog._id}`} className="tm-animate-button " ><span>Read More</span></Link>
                     <div className="uk-text-center uk-margin-bottom">

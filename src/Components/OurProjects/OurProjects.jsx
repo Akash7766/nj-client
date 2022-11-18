@@ -1,12 +1,11 @@
 import axios from 'axios';
 import React from 'react'
 import { useQuery } from 'react-query';
-import UseProject from '../../Hooks/UseProject'
 import Spinner from '../Spinner/Spinner';
 // import SingleProject from '../SingleProject/SingleProject'
 
 const OurProjects = () => {
-    const { data:projects, error, isError, isLoading,refetch } = useQuery('projects', async()=>{
+    const { data:projects,refetch } = useQuery('projects', async()=>{
         const { data } = await axios.get('http://localhost:5000/api/v1/project')
         return data
     })  ;
@@ -22,7 +21,7 @@ const OurProjects = () => {
                             projects ? projects?.data?.map(project => <li key={project._id}
                                 className="uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-2 uk-width-large-1-3 uk-width-xlarge-1-3">
                                 <a href={project.link}><img
-                                    src={` data:image/jpeg;base64,${project.img}`}
+                                    src={`${project.img}`}
                                     alt="" /></a>
                             </li>) 
                             : <h3>projects loading...</h3>
