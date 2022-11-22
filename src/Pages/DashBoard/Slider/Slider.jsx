@@ -28,10 +28,10 @@ const Slider = () => {
     const formData = new FormData()
     formData.append('file', image)
     formData.append("upload_preset","NJ_images")
-    formData.append("cloud_name","dya0kqtgi")
+    formData.append("cloud_name","dvmwear6h")
 
 
-    fetch("https://api.cloudinary.com/v1_1/dya0kqtgi/image/upload",{
+    fetch("https://api.cloudinary.com/v1_1/dvmwear6h/image/upload",{
       method:"POST",
       body:formData
     })

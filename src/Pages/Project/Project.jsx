@@ -8,8 +8,8 @@ const Project = () => {
     const data = new FormData()
     data.append("file",image)
     data.append("upload_preset","NJ_images")
-    data.append("cloud_name","dya0kqtgi")
-    fetch("https://api.cloudinary.com/v1_1/dya0kqtgi/image/upload",{
+    data.append("cloud_name","dvmwear6h")
+    fetch("https://api.cloudinary.com/v1_1/dvmwear6h/image/upload",{
       method:"POST",
       body:data
     })
