@@ -144,9 +144,7 @@ const Login = () => {
                                 <br />
                                 <div className='d-flex justify-content-between mx-auto' style={{ width: '40%' }}>
                                     <br />
-                                    <p>Login With : <MDBBtn tag='a' className='mx-3' color='none' style={{ color: '#1266f1' }}>
-                                        <MDBIcon onClick={hanldeGoogleSignIn} fab icon='google' size="lg" />
-                                    </MDBBtn></p>
+                                    <p>Login With : <span style={{cursor:"pointer"}} className='bg-primary p-2 rounded ' onClick={hanldeGoogleSignIn}>google</span></p>
 
 
 
