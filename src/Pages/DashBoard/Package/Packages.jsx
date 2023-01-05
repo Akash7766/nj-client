@@ -120,7 +120,8 @@ const Packages = () => {
           <div className="mb-3">
             <label for="exampleFormControlTextarea1" className="form-label">
               images
-            </label>
+            </label>{" "}
+            <br />
             <input
               accept="image/*"
               onChange={(e) => setImage(e.target.files[0])}
