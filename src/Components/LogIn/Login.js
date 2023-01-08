@@ -105,9 +105,9 @@ const Login = () => {
     });
     // console.log(error)
   };
-  if (user) {
-    navigate(from, { replace: true });
-  }
+  // if (user) {
+  //   navigate(from, { replace: true });
+  // }
 
   return (
     <div className="container mt-2">

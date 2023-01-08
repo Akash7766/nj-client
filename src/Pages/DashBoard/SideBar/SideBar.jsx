@@ -42,12 +42,7 @@ const SideBar = () => {
                   <span data-key="t-dashboard">Home</span>
                 </Link>
               </li>
-              <li>
-                <Link to="/dash-board/user">
-                  <i data-feather=""></i>
-                  <span data-key="t-dashboard">User</span>
-                </Link>
-              </li>
+
               <li>
                 <Link to="/dash-board/order">
                   <i data-feather=""></i>
@@ -83,6 +78,12 @@ const SideBar = () => {
                 <>
                   <li className="menu-title mt-2" data-key="t-components">
                     Elements
+                  </li>
+                  <li>
+                    <Link to="/dash-board/user">
+                      <i data-feather=""></i>
+                      <span data-key="t-dashboard">User</span>
+                    </Link>
                   </li>
 
                   <li>

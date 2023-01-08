@@ -2,8 +2,10 @@ import axios from "axios";
 import React from "react";
 import { Table } from "react-bootstrap";
 import { useQuery } from "react-query";
+import useAuth from "../../../Hooks/useAuth";
 
 const User = () => {
+  const { user } = useAuth();
   const {
     data: users,
     error,
@@ -42,7 +44,10 @@ const User = () => {
         refetch();
       });
   };
+
   const admins = users?.data?.filter((u) => u?.role == "admin");
+
+  console.log(user?.email === "super@admin.com");
   return (
     <div>
       <h5>Admin:</h5>
@@ -60,25 +65,23 @@ const User = () => {
             <tbody>
               {
                 // eslint-disable-next-line jsx-a11y/alt-text
-                admins?.map((user, index) => (
+                admins?.map((u, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{user?.displayName}</td>
-                    <td>{user?.email}</td>{" "}
-                    <td>
-                      {/* <Link
-                      to={`/dash-board/slider/update/${user._id}`}
-                      className="btn btn-primary m-1"
-                    >
-                      <i class="bi bi-pencil-square"></i>
-                    </Link> */}
-                      <button
-                        className="btn btn-danger"
-                        onClick={() => removeAdmin(user._id)}
-                      >
-                        remove Admin
-                      </button>
-                    </td>
+                    <td>{u?.displayName}</td>
+                    <td>{u?.email}</td>{" "}
+                    {user?.email === "super@admin.com" ? (
+                      <td>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => removeAdmin(u._id)}
+                        >
+                          remove Admin
+                        </button>
+                      </td>
+                    ) : (
+                      "No Permission"
+                    )}
                   </tr>
                 ))
               }
@@ -105,34 +108,38 @@ const User = () => {
                 // eslint-disable-next-line jsx-a11y/alt-text
                 users?.data
                   ?.filter((u) => u.role !== "super-admin")
-                  ?.map((user, index) => (
+                  ?.map((usr, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td>{user?.displayName}</td>
-                      <td>{user?.email}</td>
-                      <td>
-                        {/* <Link
+                      <td>{usr?.displayName}</td>
+                      <td>{usr?.email}</td>
+                      {user?.email === "super@admin.com" ? (
+                        <td>
+                          {/* <Link
                       to={`/dash-board/slider/update/${user._id}`}
                       className="btn btn-primary m-1"
                     >
                       <i class="bi bi-pencil-square"></i>
                     </Link> */}
-                        {user?.role === "admin" ? (
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => removeAdmin(user._id)}
-                          >
-                            Remove Admin
-                          </button>
-                        ) : (
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => makeAdmin(user._id)}
-                          >
-                            Make Admin
-                          </button>
-                        )}
-                      </td>
+                          {usr?.role === "admin" ? (
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => removeAdmin(usr._id)}
+                            >
+                              Remove Admin
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => makeAdmin(usr._id)}
+                            >
+                              Make Admin
+                            </button>
+                          )}
+                        </td>
+                      ) : (
+                        "No Permission"
+                      )}
                     </tr>
                   ))
               }
