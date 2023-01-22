@@ -34,6 +34,7 @@ import NavBar from "./Shared/NavBar/NavBar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Reset from "./Shared/Reset";
+import ProjectsDetails from "./Components/OurProjects/ProjectsDetails";
 
 const queryClient = new QueryClient();
 function App() {
@@ -46,14 +47,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" />
-            <Route
-              path="/projects"
-              element={
-                <RequireAuth>
-                  <Project />
-                </RequireAuth>
-              }
-            />
+            <Route path="/projects" element={<Project />} />
+            <Route path="/project/:projectId" element={<ProjectsDetails />} />
             <Route path="/contacts" element={<ContactPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/blog" element={<Blogs />} />

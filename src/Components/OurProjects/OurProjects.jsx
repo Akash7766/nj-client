@@ -1,41 +1,54 @@
-import axios from 'axios';
-import React from 'react'
-import { useQuery } from 'react-query';
-import Spinner from '../Spinner/Spinner';
+import axios from "axios";
+import React from "react";
+import { useQuery } from "react-query";
+import Spinner from "../Spinner/Spinner";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
+// import required modules
+import { Pagination, Navigation } from "swiper";
 // import SingleProject from '../SingleProject/SingleProject'
 
 const OurProjects = () => {
-    const { data:projects,refetch } = useQuery('projects', async()=>{
-        const { data } = await axios.get('http://localhost:5000/api/v1/project')
-        return data
-    })  ;
+  const { data: projects, refetch } = useQuery("projects", async () => {
+    const { data } = await axios.get("http://localhost:5000/api/v1/project");
+    return data;
+  });
 
-      return (
+  return (
+    <div className="Projects_slider container">
+      <Swiper
+        slidesPerView={3}
+        spaceBetween={30}
+        slidesPerGroup={1}
+        loop={true}
+        loopFillGroupWithBlank={true}
+        pagination={{
+          clickable: true,
+        }}
+        navigation={true}
+        modules={[Pagination, Navigation]}
+        className="mySwiper"
+      >
+        {projects &&
+          projects?.data?.map((project) => {
+            return (
+              <div key={project?._id}>
+                <SwiperSlide>
+                  <a href={project?.link}>
+                    <img className="w-100" src={project?.img} alt="" />
+                  </a>
+                </SwiperSlide>
+              </div>
+            );
+          })}
+      </Swiper>
+    </div>
+  );
+};
 
-        <div className="uk-panel uk-panel-box uk-panel-box-primary tm-instagram-pics">
-            <h3 className="uk-panel-title">Our Leatest Projects</h3>
-            <div className="uk-slidenav-position" data-uk-slider>
-                <div className="uk-slider-container">
-                    <ul className="uk-slider tm-instagram-size-large">
-                        {
-                            projects ? projects?.data?.map(project => <li key={project._id}
-                                className="uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-2 uk-width-large-1-3 uk-width-xlarge-1-3">
-                                <a href={project.link}><img
-                                    src={`${project.img}`}
-                                    alt="" /></a>
-                            </li>) 
-                            : <h3>projects loading...</h3>
-                        }
-                    </ul>
-                </div>
-                <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-previous"
-                    data-uk-slider-item="previous"></a>
-                <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-next"
-                    data-uk-slider-item="next"></a>
-            </div>
-        </div>
-
-    )
-}
-
-export default OurProjects
+export default OurProjects;
